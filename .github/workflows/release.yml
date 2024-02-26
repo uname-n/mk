@@ -67,5 +67,6 @@ jobs:
           files: release_assets/mk-*
           prerelease: ${{ endsWith(github.ref, '-alpha') }}
           generate_release_notes: true
+          token: ${{ secrets.PAT }}
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
