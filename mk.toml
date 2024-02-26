@@ -1,0 +1,19 @@
+[local]
+command = ["func", "start"]
+background_tasks = [
+    [
+        "azurite",
+        "--silent",
+        "--location",
+        ".azurite",
+        "--debug",
+        "$AZURITE_DEBUG_PATH",
+    ],
+]
+
+[test]
+command = ["ping", "localhost"]
+background_tasks = [["ping", "localhost"], ["ping", "localhost"]]
+
+[fail]
+command = ["ech", "hello"]

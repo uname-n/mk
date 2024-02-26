@@ -1,0 +1,71 @@
+name: Rust Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build for ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            asset_name: mk-linux
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            asset_name: mk-macos-x86_64
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            asset_name: mk-macos-aarch64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mk-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/mk
+
+  publish_release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: release_assets
+
+      - name: Rename binaries for release
+        run: |
+          mv release_assets/mk-x86_64-unknown-linux-gnu/mk release_assets/mk-linux
+          mv release_assets/mk-x86_64-apple-darwin/mk release_assets/mk-macos-x86_64
+          mv release_assets/mk-aarch64-apple-darwin/mk release_assets/mk-macos-aarch64
+
+      - name: List release assets
+        run: |
+          ls -lah release_assets
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release_assets/mk-*
+          prerelease: ${{ endsWith(github.ref, '-alpha') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
