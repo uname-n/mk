@@ -88,6 +88,12 @@ pub async fn handle_command(opts: Opts, shutdown_signal: Arc<AtomicBool>) -> Res
     let timestamp = current_timestamp();
 
     println!(
+        "{}{}{}",
+        termion::clear::All,
+        termion::cursor::Goto(1, 1),
+        termion::cursor::Hide,
+    );
+    println!(
         "{}mk:: {}running {}{:?}{}",
         color::Fg(color::LightBlack),
         color::Fg(color::Green),
@@ -171,6 +177,7 @@ pub async fn handle_command(opts: Opts, shutdown_signal: Arc<AtomicBool>) -> Res
         color::Fg(color::Green),
         color::Fg(color::Reset)
     );
+    println!("{}", termion::cursor::Show);
 
     Ok(())
 }
