@@ -21,6 +21,9 @@ jobs:
           - target: aarch64-apple-darwin
             os: macos-latest
             asset_name: mk-macos-aarch64
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            asset_name: mk-linux-aarch64
 
     steps:
       - name: Checkout code
@@ -53,9 +56,10 @@ jobs:
 
       - name: Rename binaries for release
         run: |
-          mv release_assets/mk-x86_64-unknown-linux-gnu/mk release_assets/mk-linux
+          mv release_assets/mk-x86_64-unknown-linux-gnu/mk release_assets/mk-linux-x86_64
           mv release_assets/mk-x86_64-apple-darwin/mk release_assets/mk-macos-x86_64
           mv release_assets/mk-aarch64-apple-darwin/mk release_assets/mk-macos-aarch64
+          mv release_assets/mk-aarch64-unknown-linux-gnu release_assets/mk-linux-aarch64
 
       - name: List release assets
         run: |
