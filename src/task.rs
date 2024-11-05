@@ -29,10 +29,10 @@ pub async fn run_task(
         println!(
             "{}mk:: [{}{:?}{}] background task:{} {:?}{}",
             color::Fg(color::LightBlack),
-            color::Fg(color::LightGreen),
+            color::Fg(color::Green),
             index,
             color::Fg(color::LightBlack),
-            color::Fg(color::LightGreen),
+            color::Fg(color::Green),
             command,
             color::Fg(color::Reset)
         );
@@ -96,7 +96,7 @@ pub async fn handle_command(opts: Opts, shutdown_signal: Arc<AtomicBool>) -> Res
     println!(
         "{}mk:: {}running {}{:?}{}",
         color::Fg(color::LightBlack),
-        color::Fg(color::Green),
+        color::Fg(color::Blue),
         color::Fg(color::LightGreen),
         opts.command,
         color::Fg(color::Reset)
@@ -107,23 +107,37 @@ pub async fn handle_command(opts: Opts, shutdown_signal: Arc<AtomicBool>) -> Res
     } else {
         vec![]
     };
-    let preprocessed_main_command = replace_env_vars(&task.command)?;
 
-    let mut main_command_child = run_task(&preprocessed_main_command, false, 0, &timestamp).await?;
+    for (index, command_step) in task.commands.iter().enumerate() {
+        let preprocessed_command = replace_env_vars(command_step)?;
+        let mut child = run_task(&preprocessed_command, false, index, &timestamp).await?;
+        
+        print!("\r\n");
+        println!(
+            "{}mk:: {}running {}{:?}{}",
+            color::Fg(color::LightBlack),
+            color::Fg(color::Blue),
+            color::Fg(color::Green),
+            command_step,
+            color::Fg(color::Reset)
+        );
+        print_separator();
+        
+        loop {
+            tokio::select! {
+                _ = child.wait() => {
+                    break;
+                },
+                _ = signal::ctrl_c() => {
+                    shutdown_signal.store(true, Ordering::SeqCst);
+                    child.kill().await?;
+                    break;
+                },
+            }
+        }
 
-    print_separator();
-    print!("\r\n");
-
-    loop {
-        tokio::select! {
-            _ = main_command_child.wait() => {
-                break;
-            },
-            _ = signal::ctrl_c() => {
-                shutdown_signal.store(true, Ordering::SeqCst);
-                main_command_child.kill().await?;
-                break;
-            },
+        if shutdown_signal.load(Ordering::SeqCst) {
+            break;
         }
     }
 
@@ -132,20 +146,20 @@ pub async fn handle_command(opts: Opts, shutdown_signal: Arc<AtomicBool>) -> Res
     if shutdown_signal.load(Ordering::SeqCst) {
         print_separator();
         println!(
-            "{}mk:: {}ctrl-c signal recieved. shutting down...{}",
+            "{}mk:: {}ctrl-c signal received. Shutting down...{}",
             color::Fg(color::LightBlack),
-            color::Fg(color::Green),
+            color::Fg(color::Blue),
             color::Fg(color::Reset)
         );
     }
 
-    if background_children.len() > 0 {
+    if !background_children.is_empty() {
         print_separator();
         for mut child in background_children {
             println!(
                 "{}mk:: exiting background task. pid={}{:?}{}",
                 color::Fg(color::LightBlack),
-                color::Fg(color::LightGreen),
+                color::Fg(color::Green),
                 child.id().unwrap(),
                 color::Fg(color::Reset)
             );
@@ -174,7 +188,7 @@ pub async fn handle_command(opts: Opts, shutdown_signal: Arc<AtomicBool>) -> Res
     println!(
         "{}mk:: {}done{} ",
         color::Fg(color::LightBlack),
-        color::Fg(color::Green),
+        color::Fg(color::LightGreen),
         color::Fg(color::Reset)
     );
     println!("{}", termion::cursor::Show);

@@ -1,5 +1,5 @@
 [local]
-command = ["func", "start"]
+commands = [["func", "start"]]
 background_tasks = [
     [
         "azurite",
@@ -12,8 +12,19 @@ background_tasks = [
 ]
 
 [test]
-command = ["ping", "localhost"]
+commands = [["ping", "localhost"]]
 background_tasks = [["ping", "localhost"], ["ping", "localhost"]]
 
+[multi]
+commands = [
+    ["ls", "."],
+    ["touch", "mk-testing-file"], 
+    ["ls", "."],
+    ["rm", "mk-testing-file"],
+    ["ls", "."],
+    ["ping", "localhost"]
+]
+background_tasks = [["ping", "localhost"]]
+
 [fail]
-command = ["ech", "hello"]
+commands = [["ech", "hello"]]
