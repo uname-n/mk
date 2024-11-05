@@ -26,7 +26,7 @@ mk <command>
 
 ```toml
 [local]
-command = [["func", "start"]]
+commands = [["func", "start"]]
 background_tasks = [
     [
         "azurite",
@@ -39,7 +39,7 @@ background_tasks = [
 ]
 
 [test]
-command = [["ping", "localhost"]]
+commands = [["ping", "localhost"]]
 background_tasks = [["ping", "localhost"], ["ping", "localhost"]]
 ```
 
@@ -87,7 +87,7 @@ Reference in `mk.toml` configuration:
 
 ```toml
 [local]
-command = [["func", "start"]]
+commands = [["func", "start"]]
 background_tasks = [
     [
         "azurite",
