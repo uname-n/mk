@@ -108,7 +108,7 @@ pub async fn handle_command(opts: Opts, shutdown_signal: Arc<AtomicBool>) -> Res
         vec![]
     };
 
-    for (index, command_step) in task.command.iter().enumerate() {
+    for (index, command_step) in task.commands.iter().enumerate() {
         let preprocessed_command = replace_env_vars(command_step)?;
         let mut child = run_task(&preprocessed_command, false, index, &timestamp).await?;
         
