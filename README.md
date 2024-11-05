@@ -26,7 +26,7 @@ mk <command>
 
 ```toml
 [local]
-command = ["func", "start"]
+command = [["func", "start"]]
 background_tasks = [
     [
         "azurite",
@@ -34,12 +34,13 @@ background_tasks = [
         "--location",
         ".azurite",
         "--debug",
-        ".azurite/debug.log",
+        "$AZURITE_DEBUG_PATH",
     ],
 ]
 
 [test]
-command = ["echo", "hello"]
+command = [["ping", "localhost"]]
+background_tasks = [["ping", "localhost"], ["ping", "localhost"]]
 ```
 
 ## Example Output
@@ -51,24 +52,25 @@ project % mk test
 mk:: running "test"
 mk:: [1] background task: ["ping", "localhost"]
 mk:: [2] background task: ["ping", "localhost"]
-mk:: = = = = = = = = = = = = = = = = = = = = =
 
-PING localhost (127.0.0.1): 56 data bytes
-64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.029 ms
-64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.054 ms
-64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.273 ms
+mk:: running ["ping", "localhost"]
+mk:: = = = = = = = = = = = = = = = = = = = = =
+PING localhost(localhost (::1)) 56 data bytes
+64 bytes from localhost (::1): icmp_seq=1 ttl=64 time=0.013 ms
+64 bytes from localhost (::1): icmp_seq=2 ttl=64 time=0.042 ms
+64 bytes from localhost (::1): icmp_seq=3 ttl=64 time=0.013 ms
 ^C
 --- localhost ping statistics ---
-3 packets transmitted, 3 packets received, 0.0% packet loss
-round-trip min/avg/max/stddev = 0.029/0.119/0.273/0.110 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2047ms
+rtt min/avg/max/mdev = 0.013/0.022/0.042/0.013 ms
 
 mk:: = = = = = = = = = = = = = = = = = = = = =
-mk:: ctrl-c signal recieved. shutting down gracefully...
+mk:: ctrl-c signal received. Shutting down...
 mk:: = = = = = = = = = = = = = = = = = = = = =
-mk:: exiting background task. pid=60455
-mk:: exiting background task. pid=60464
+mk:: exiting background task. pid=28009
+mk:: exiting background task. pid=28010
 mk:: = = = = = = = = = = = = = = = = = = = = =
-mk:: done
+mk:: done 
 ```
 
 ## Environment Variables Support
@@ -85,7 +87,7 @@ Reference in `mk.toml` configuration:
 
 ```toml
 [local]
-command = ["func", "start"]
+command = [["func", "start"]]
 background_tasks = [
     [
         "azurite",
