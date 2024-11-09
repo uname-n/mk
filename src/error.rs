@@ -10,6 +10,4 @@ pub enum RError {
         color::Fg(color::Reset)
     )]
     TaskNotFound,
-    #[error("{}mk:: {}failed to start task: {:?}{}", color::Fg(color::LightBlack), color::Fg(color::Red), .0, color::Fg(color::Reset))]
-    TaskStartError(Vec<String>),
 }

@@ -26,5 +26,8 @@ commands = [
 ]
 background_tasks = [["ping", "localhost"]]
 
+[non-env]
+commands = [["echo", "$(pwd)"]]
+
 [fail]
 commands = [["ech", "hello"]]

@@ -40,24 +40,22 @@ pub async fn run_task(
         create_log_directory(&log_dir)?;
     }
 
-    let process = command
-        .first()
-        .ok_or(RError::TaskStartError(command.to_vec()))?;
-    let args = &command[1..];
-    let output = if background {
+    let stdout = if background {
         log_file(&log_dir, index)?
     } else {
         Stdio::inherit()
     };
+
     let stderr = if background {
-        Stdio::null()
+        log_file(&log_dir, index)?
     } else {
         Stdio::inherit()
     };
 
-    let child = TokioCommand::new(process)
-        .args(args)
-        .stdout(output)
+    let child = TokioCommand::new("sh")
+        .arg("-c")
+        .arg(command.join(" "))
+        .stdout(stdout)
         .stderr(stderr)
         .spawn()
         .with_context(|| {

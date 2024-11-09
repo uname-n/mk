@@ -34,7 +34,7 @@ pub fn replace_env_vars(command: &[String]) -> Result<Vec<String>> {
     command
         .iter()
         .map(|arg| {
-            if arg.starts_with('$') {
+            if arg.starts_with('$') && arg[1..].chars().all(|c| c.is_ascii_uppercase()) {
                 let key = arg.trim_start_matches('$');
                 env::var(key).map_err(|_| {
                     anyhow::Error::msg(format!(
