@@ -35,7 +35,7 @@ mk <command>
 
 ```toml
 [local]
-commands = [["func", "start"]]
+commands = ["func start"]
 background_tasks = [
     [
         "azurite",
@@ -48,8 +48,8 @@ background_tasks = [
 ]
 
 [test]
-commands = [["ping", "localhost"]]
-background_tasks = [["ping", "localhost"], ["ping", "localhost"]]
+commands = ["ping localhost"]
+background_tasks = ["ping localhost", ["ping", "localhost"]]
 ```
 
 ## Example Output
