@@ -15,6 +15,14 @@ background_tasks = [
 commands = [["ping", "localhost"]]
 background_tasks = [["ping", "localhost"], ["ping", "localhost"]]
 
+[test-slim]
+commands = ["ping localhost"]
+background_tasks = ["ping localhost", "ping localhost"]
+
+[test-mixed]
+commands = ["ping localhost"]
+background_tasks = ["ping localhost", ["ping", "localhost"]]
+
 [multi]
 commands = [
     ["ls", "."],

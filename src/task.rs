@@ -25,6 +25,8 @@ pub async fn run_task(
     timestamp: &str,
 ) -> Result<Child> {
     let log_dir = PathBuf::from(".log/mk").join(timestamp);
+    let command_str = command.join(" ");
+
     if background {
         println!(
             "{}mk:: [{}{:?}{}] background task:{} {:?}{}",
@@ -33,7 +35,7 @@ pub async fn run_task(
             index,
             color::Fg(color::LightBlack),
             color::Fg(color::Green),
-            command,
+            command_str,
             color::Fg(color::Reset)
         );
 
@@ -54,7 +56,7 @@ pub async fn run_task(
 
     let child = TokioCommand::new("sh")
         .arg("-c")
-        .arg(command.join(" "))
+        .arg(command_str)
         .stdout(stdout)
         .stderr(stderr)
         .spawn()
@@ -116,7 +118,7 @@ pub async fn handle_command(opts: Opts, shutdown_signal: Arc<AtomicBool>) -> Res
             color::Fg(color::LightBlack),
             color::Fg(color::Blue),
             color::Fg(color::Green),
-            command_step,
+            command_step.join(" "),
             color::Fg(color::Reset)
         );
         print_separator();
