@@ -10,7 +10,7 @@
 To install `mk` using [homebrew](https://brew.sh), run the following:
 ```
 brew tap uname-n/brew
-brew intall mk
+brew install mk
 ```
 
 #### Manual
